@@ -1,27 +1,27 @@
 {
-  "name": "employee-tracker",
+  "name": "bossmode",
   "version": "1.0.0",
-  "description": "",
-  "type": "module",
+  "description": "The ultimate employee manager solution",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.js"
+    "start": "node index.js",
+    "start:dev": "nodemon index.js"
   },
-  "dependencies": {
-    "asciiart-logo": "^0.2.6",
-    "dotenv": "^16.4.5",
-    "inquirer": "8.2.4",
-    "pg": "^8.11.3"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/musserdn/BossMode.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/inquirer": "^9.0.7",
-    "@types/pg": "^8.11.6",
-    "typescript": "^5.2.2"
+  "bugs": {
+    "url": "https://github.com/musserdn/BossMode/issues"
+  },
+  "homepage": "https://github.com/musserdn/BossMode#readme",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "inquirer": "^8.2.4",
+    "pg": "^8.13.1"
   }
 }
