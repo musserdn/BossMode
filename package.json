@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/musserdn/BossMode#readme",
   "dependencies": {
+    "asciiart-logo": "^0.2.7",
+    "cli-table3": "^0.6.5",
     "dotenv": "^16.4.7",
     "inquirer": "^8.2.4",
     "pg": "^8.13.1"
