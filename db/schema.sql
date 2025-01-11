@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS bossman_db;
-CREATE DATABASE bossman_db;
+DROP DATABASE IF EXISTS bossmode_db;
+CREATE DATABASE bossmode_db;
 
-\c bossman_db;
+\c bossmode_db;
 
 CREATE TABLE department (
     id SERIAL PRIMARY KEY,

@@ -1,6 +1,6 @@
 import logo from "asciiart-logo";
 import inquirer from "inquirer";
-import { viewAllEmployees } from "./src/query.js";
+import { viewAllEmployees, viewAllRoles, viewAllDepartments, addDepartment } from "./src/query.js";
 import CliTable3 from "cli-table3";
 
 start();
@@ -8,7 +8,7 @@ start();
 function start() {
     console.log(
         logo({
-            name: 'Bossman',
+            name: 'Bossmode',
             font: 'Big Money-sw',
             lineChars: 10,
             padding: 1,
@@ -73,6 +73,71 @@ function mainMenu() {
                             mainMenu();
                         });
                     break;
+                case 'View All Roles':
+                    viewAllRoles()
+                        .then((rows) => {
+                            const table = new CliTable3({
+                                head: ['ID', 'Title', 'Department', 'Salary'],
+                                colWidths: [5, 30, 20, 20],
+                                chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' },
+                            });
+                            rows.forEach(row => {
+                                table.push([
+                                    row.id,
+                                    row.title,
+                                    row.department,
+                                    row.salary
+                                ]);
+                            });
+                            console.log(table.toString());
+                            mainMenu();
+                        })
+                        .catch((error) => {
+                            console.error('Error in View All Roles case:', error);
+                            mainMenu();
+                        });
+                    break;
+                case 'View All Departments':
+                    viewAllDepartments()
+                        .then((rows) => {
+                            const table = new CliTable3({
+                                head: ['ID', 'Department'],
+                                colWidths: [5, 30],
+                                chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' },
+                            });
+                            rows.forEach(row => {
+                                table.push([
+                                    row.id,
+                                    row.department
+                                ]);
+                            });
+                            console.log(table.toString());
+                            mainMenu();
+                        })
+                        .catch((error) => {
+                            console.error('Error in View All Departments case:', error);
+                            mainMenu();
+                        });
+                    break;
+                case 'Add A Department':
+                    inquirer.prompt([
+                        {
+                            name: 'name',
+                            message: 'What is the name of the department?',
+                        },
+                    ]).then((newDepartment) => {
+                        addDepartment(newDepartment)
+                            .then(() => console.log('Department Added'))
+                            .then(() => mainMenu());
+                    })
+                        .catch((error) => {
+                            console.error('Error in View All Departments case:', error);
+                            mainMenu();
+                        });
+                    break;
+                case 'Quit':
+                    console.log('Amazing Bossmode, see you again soon!');
+                    process.exit();
             }
         })
 }

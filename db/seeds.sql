@@ -1,4 +1,4 @@
-\c bossman_db
+\c bossmode_db
 
 INSERT INTO department (name)
 VALUES ('Engineering'),
