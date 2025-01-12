@@ -133,6 +133,8 @@ async function AddEmployees() {
             value: emp.id
         }));
 
+        managerList.unshift({ name: 'None', value: null });
+
         const answers = await inquirer.prompt([
             {
                 type: 'input',
