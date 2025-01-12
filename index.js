@@ -1,6 +1,6 @@
 import logo from "asciiart-logo";
 import inquirer from "inquirer";
-import { queryAllEmployees, queryAllRoles, queryAllDepartments, queryaddDepartment, queryaddRole } from "./src/query.js";
+import { queryAllEmployees, queryAllRoles, queryAllDepartments, queryAddDepartment, queryAddRole, queryAddEmployee } from "./src/query.js";
 import CliTable3 from "cli-table3";
 
 start();
@@ -23,7 +23,7 @@ function start() {
             .render()
     );
     mainMenu();
-}
+};
 
 function mainMenu() {
     inquirer
@@ -49,6 +49,12 @@ function mainMenu() {
                 case 'View All Employees':
                     viewAllEmployees();
                     break;
+                case 'Add Employee':
+                    AddEmployees();
+                    break;
+                case 'Update An Employee Role':
+                    updateEmployeeRole();
+                    break;
                 case 'View All Roles':
                     viewAllRoles();
                     break;
@@ -69,7 +75,7 @@ function mainMenu() {
                     mainMenu();
             }
         })
-}
+};
 
 
 // Breaking out each case into a separate function
@@ -99,7 +105,58 @@ function viewAllEmployees() {
             console.error('Error in View All Employees case:', error);
             mainMenu();
         });
-}
+};
+
+
+async function AddEmployees() {
+    try {
+        const roles = await queryAllRoles();
+        const employees = await queryAllEmployees();
+        const roleList = roles.map(role => ({
+            name: role.title,
+            value: role.id
+        }));
+        const managerList = employees.map(emp => ({
+            name: emp.first_name + ' ' + emp.last_name,
+            value: emp.id
+        }));
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'first_name',
+                message: 'Enter the first name of the new employee:',
+                validate: input => input ? true : 'First name cannot be empty.'
+            },
+            {
+                type: 'input',
+                name: 'last_name',
+                message: 'Enter the last name of the new employee:',
+                validate: input => input ? true : 'Last name cannot be empty.'
+            },
+            {
+                type: 'list',
+                name: 'role_id',
+                message: 'Select the role for the new employee:',
+                choices: roleList
+            },
+            {
+                type: 'list',
+                name: 'manager_id',
+                message: 'Select the manager for the new employee:',
+                choices: managerList
+            },
+        ]);
+
+        const newEmployee = await queryAddEmployee(answers);
+        console.log("New Employee:", newEmployee);
+        mainMenu();
+
+    } catch (error) {
+        console.error('Error in Add Employee:', error);
+        mainMenu();
+    }
+};
 
 function viewAllRoles() {
     queryAllRoles()
@@ -124,7 +181,7 @@ function viewAllRoles() {
             console.error('Error in View All Roles case:', error);
             mainMenu();
         });
-}
+};
 
 async function addRole() {
     try {
@@ -157,8 +214,7 @@ async function addRole() {
             },
         ]);
 
-        console.log(answers);
-        const newRole = await queryaddRole(answers);
+        const newRole = await queryAddRole(answers);
         console.log("New Role:", newRole);
         mainMenu();
 
@@ -166,44 +222,44 @@ async function addRole() {
         console.error('Error in Add Role prompt:', error);
         mainMenu();
     }
-}
+};
 
-function viewAllDepartments() {
-    queryAllDepartments()
-        .then((rows) => {
-            const table = new CliTable3({
-                head: ['ID', 'Department'],
-                colWidths: [5, 30],
-                chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' },
-            });
-            rows.forEach(row => {
-                table.push([
-                    row.id,
-                    row.department
-                ]);
-            });
-            console.log(table.toString());
-            mainMenu();
-        })
-        .catch((error) => {
-            console.error('Error in View All Departments case:', error);
-            mainMenu();
+async function viewAllDepartments() {
+    try {
+        const rows = await queryAllDepartments();
+        const table = new CliTable3({
+            head: ['ID', 'Department'],
+            colWidths: [5, 30],
+            chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' },
         });
-}
+        rows.forEach(row => {
+            table.push([
+                row.id,
+                row.department
+            ]);
+        });
+        console.log(table.toString());
+        mainMenu();
 
-function addDepartment() {
-    inquirer.prompt([
-        {
-            name: 'name',
-            message: 'What is the name of the department?',
-        },
-    ]).then((newDepartment) => {
-        queryaddDepartment(newDepartment)
-            .then(() => console.log('Department Added'))
-            .then(() => mainMenu());
-    })
-        .catch((error) => {
-            console.error('Error in View All Departments case:', error);
-            mainMenu();
-        });
-}
+    } catch (error) {
+        console.error('Error in View All Departments case:', error);
+        mainMenu();
+    }
+};
+
+async function addDepartment() {
+    try {
+        const answers = await inquirer.prompt([
+            {
+                name: 'name',
+                message: 'What is the name of the department?',
+            },
+        ])
+        const newDepartment = await queryAddDepartment(answers);
+        console.log('New Department:', newDepartment);
+        mainMenu();
+    } catch (error) {
+        console.error('Error in View All Departments case:', error);
+        mainMenu();
+    }
+};

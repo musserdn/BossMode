@@ -15,6 +15,10 @@ INNER JOIN department d ON r.department_id = d.id
 LEFT JOIN employee m ON m.id = e.manager_id
 ORDER BY e.last_name;
 
+
+
+
+
 --View all Roles
 SELECT
     r.id,
