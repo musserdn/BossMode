@@ -39,7 +39,7 @@ The following features have not yet been implemented in release `1.5.123`
   4. Run `npm run start` to begin program.
 
   ## [Usage](#usage)
-  Use this to view current employee data, add employees, add roles, add departments or update an employee role.  View a demo of the application here: [Youtube Demo Video](https://youtube.com/playlist?list=PLp5-kLRcKJPc3IzxO8tBtEfKaW1WGHQDz&si=fa7l1BIK_Ir-TNPB).
+  Use this to view current employee data, add employees, add roles, add departments or update an employee role.  View a demo of the application here: [Youtube Demo Video](https://youtu.be/EhOgCX7KMCk).
   
   > 1. Use the up or down arrow to move the the option of your choice.
   > 2. View options will provide you with the current data or prompt your for a specifc manager or department.
