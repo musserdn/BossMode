@@ -1,6 +1,6 @@
 import logo from "asciiart-logo";
 import inquirer from "inquirer";
-import { queryAllEmployees, queryAllRoles, queryAllDepartments, queryAddDepartment, queryAddRole, queryAddEmployee, queryUpdateEmployeeRole } from "./src/query.js";
+import { queryAllEmployees, queryAllRoles, queryAllDepartments, queryAddDepartment, queryAddRole, queryAddEmployee, queryUpdateEmployeeRole, queryAllManagers, queryAManager, queryADepartment, queryDepartmentBudget } from "./src/query.js";
 import CliTable3 from "cli-table3";
 
 start();
@@ -40,6 +40,9 @@ function mainMenu() {
                     'Add Role',
                     'View All Departments',
                     'Add A Department',
+                    'View Employees by Manager',
+                    'View Employees by Department',
+                    'View Budget by Department',
                     'Quit'
                 ],
             },
@@ -66,6 +69,15 @@ function mainMenu() {
                     break;
                 case 'Add A Department':
                     addDepartment();
+                    break;
+                case 'View Employees by Manager':
+                    ViewEmployeesbyManager();
+                    break;
+                case 'View Employees by Department':
+                    ViewEmployeesbyDepartment();
+                    break;
+                case 'View Budget by Department':
+                    ViewDepartmentBudget();
                     break;
                 case 'Quit':
                     console.log('Amazing Bossmode, see you again soon!');
@@ -298,6 +310,105 @@ async function addDepartment() {
         mainMenu();
     } catch (error) {
         console.error('Error in View All Departments case:', error);
+        mainMenu();
+    }
+};
+
+async function ViewEmployeesbyManager() {
+    try {
+        const managers = await queryAllManagers();
+        const managerList = managers.map(emp => ({
+            name: emp.manager,
+            value: emp.manager_id
+        }));
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'manager_id',
+                message: 'Select a manager:',
+                choices: managerList
+            },
+        ]);
+        console.log(answers.manager_id);
+        const rows = await queryAManager(answers.manager_id);
+        const table = new CliTable3({
+            head: ['First Name', 'Last Name'],
+            colWidths: [20, 20],
+            chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' },
+        });
+        rows.forEach(row => {
+            table.push([
+                row.first_name,
+                row.last_name
+            ]);
+        });
+        console.log(table.toString());
+        mainMenu();
+
+    } catch (error) {
+        console.error('Error in Viewing Employees by Manager:', error);
+        mainMenu();
+    }
+};
+
+async function ViewEmployeesbyDepartment() {
+    try {
+        const dept = await queryAllDepartments();
+        const deptList = dept.map(depts => ({
+            name: depts.department,
+            value: depts.id
+        }));
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Select a Department:',
+                choices: deptList
+            },
+        ]);
+        console.log(answers.department);
+        const rows = await queryADepartment(answers.department);
+        const table = new CliTable3({
+            head: ['First Name', 'Last Name'],
+            colWidths: [20, 20],
+            chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' },
+        });
+        rows.forEach(row => {
+            table.push([
+                row.first_name,
+                row.last_name
+            ]);
+        });
+        console.log(table.toString());
+        mainMenu();
+
+    } catch (error) {
+        console.error('Error in Viewing Employees by Department:', error);
+        mainMenu();
+    }
+};
+
+async function ViewDepartmentBudget() {
+    try {
+        const rows = await queryDepartmentBudget();
+        const table = new CliTable3({
+            head: ['Department', 'Total Utilized Budget'],
+            colWidths: [30, 30],
+            chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' },
+        });
+        rows.forEach(row => {
+            table.push([
+                row.department,
+                row.budget
+            ]);
+        });
+        console.log(table.toString());
+        mainMenu();
+
+    } catch (error) {
+        console.error('Error in Viewing Budget by Department:', error);
         mainMenu();
     }
 };

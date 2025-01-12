@@ -86,7 +86,7 @@ export async function queryAllRoles() {
 };
 
 export async function queryAllDepartments() {
-    console.log('You selected View All Departments');
+    console.log('Listing All Departments');
     try {
         const { rows } = await pool.query(`
             SELECT 
@@ -134,3 +134,109 @@ export async function queryAddRole(newRole) {
         throw err;
     }
 }
+
+export async function queryAllManagers() {
+    console.log('Pulling list of managers');
+    try {
+        const { rows } = await pool.query(`
+         SELECT DISTINCT 
+            m.id AS manager_id,
+            CONCAT(m.first_name, ' ', m.last_name) AS manager
+        FROM 
+            employee e
+        LEFT JOIN 
+            employee m ON e.manager_id = m.id
+        WHERE 
+            e.manager_id IS NOT NULL
+        ORDER BY 
+            manager;`);
+        console.log('queryAllManager executed successfully');
+        return rows;
+    } catch (err) {
+        console.error('Error executing queryAllManager:', err);
+        throw err;
+    }
+};
+
+export async function queryAManager(manager_id) {
+    console.log('Pulling list of employees for this manager');
+    try {
+        const query = (`
+         SELECT 
+            e.first_name,
+            e.last_name
+        FROM 
+            employee e
+        WHERE 
+            e.manager_id = $1
+        ORDER BY 
+            e.first_name, e.last_name;`);
+        const value = [manager_id];
+        const { rows } = await pool.query(query, value);
+        console.log('queryAManager executed successfully');
+        return rows;
+    } catch (err) {
+        console.error('Error executing queryAManager:', err);
+        throw err;
+    }
+};
+
+export async function queryADepartment(id) {
+    console.log('Pulling list of employees for this department');
+    try {
+        const query = (`
+         SELECT 
+            e.first_name,
+            e.last_name
+         FROM 
+            employee e
+        JOIN 
+             role r ON e.role_id = r.id
+        JOIN 
+            department d ON r.department_id = d.id
+        WHERE 
+            d.id = $1
+         ORDER BY 
+             e.first_name, e.last_name;`);
+        const value = [id];
+        const { rows } = await pool.query(query, value);
+        console.log('queryADepartment executed successfully');
+        return rows;
+    } catch (err) {
+        console.error('Error executing queryADepartment:', err);
+        throw err;
+    }
+};
+
+export async function queryDepartmentBudget() {
+    console.log('Pulling list of Budgets by Department');
+    try {
+        const query = (`
+        SELECT 
+            d.name AS department,
+            ROUND(SUM(r.salary * role_count)) AS budget
+        FROM (
+            SELECT 
+                e.role_id,
+                COUNT(e.id) AS role_count
+            FROM 
+                employee e
+            GROUP BY 
+                e.role_id
+            ) role_counts
+        INNER JOIN 
+            role r ON role_counts.role_id = r.id
+        INNER JOIN 
+            department d ON r.department_id = d.id
+        GROUP BY 
+            d.name
+        ORDER BY 
+            department;`);
+        const { rows } = await pool.query(query);
+        console.log('queryDepartmentBudget executed successfully');
+        return rows;
+    } catch (err) {
+        console.error('Error executing queryDepartmentBudget:', err);
+        throw err;
+    }
+};

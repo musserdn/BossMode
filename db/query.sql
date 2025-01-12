@@ -35,3 +35,40 @@ SELECT
     name AS department 
 FROM department 
 ORDER BY department;
+
+
+-- view employees by manager
+SELECT DISTINCT 
+    m.id AS manager_id,
+    CONCAT(m.first_name, ' ', m.last_name) AS manager
+FROM 
+    employee e
+LEFT JOIN 
+    employee m ON e.manager_id = m.id
+WHERE 
+    e.manager_id IS NOT NULL
+ORDER BY 
+    manager;
+
+
+--  view the total utilized budget of a department—in other words, the combined salaries of all employees in that department 
+SELECT 
+    d.name AS department,
+    ROUND(SUM(r.salary * role_count)) AS budget
+FROM (
+    SELECT 
+        e.role_id,
+        COUNT(e.id) AS role_count
+    FROM 
+        employee e
+    GROUP BY 
+        e.role_id
+) role_counts
+INNER JOIN 
+    role r ON role_counts.role_id = r.id
+INNER JOIN 
+    department d ON r.department_id = d.id
+GROUP BY 
+    d.name
+ORDER BY 
+    department;
