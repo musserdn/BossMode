@@ -1,6 +1,6 @@
 import logo from "asciiart-logo";
 import inquirer from "inquirer";
-import { queryAllEmployees, queryAllRoles, queryAllDepartments, queryAddDepartment, queryAddRole, queryAddEmployee } from "./src/query.js";
+import { queryAllEmployees, queryAllRoles, queryAllDepartments, queryAddDepartment, queryAddRole, queryAddEmployee, queryUpdateEmployeeRole } from "./src/query.js";
 import CliTable3 from "cli-table3";
 
 start();
@@ -154,6 +154,44 @@ async function AddEmployees() {
 
     } catch (error) {
         console.error('Error in Add Employee:', error);
+        mainMenu();
+    }
+};
+
+async function updateEmployeeRole() {
+    try {
+        const roles = await queryAllRoles();
+        const employees = await queryAllEmployees();
+        const roleList = roles.map(role => ({
+            name: role.title,
+            value: role.id
+        }));
+        const EmployeeList = employees.map(emp => ({
+            name: emp.first_name + ' ' + emp.last_name,
+            value: emp.id
+        }));
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'id',
+                message: 'Select the employee to update:',
+                choices: EmployeeList
+            },
+            {
+                type: 'list',
+                name: 'role_id',
+                message: 'Select the new role for the employee:',
+                choices: roleList
+            },
+        ]);
+
+        const UpdateEmployeeRole = await queryUpdateEmployeeRole(answers);
+        console.log("Update Employee Role:", UpdateEmployeeRole);
+        mainMenu();
+
+    } catch (error) {
+        console.error('Error in update Employee Role:', error);
         mainMenu();
     }
 };

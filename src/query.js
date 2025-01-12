@@ -45,6 +45,26 @@ export async function queryAddEmployee(newEmployee) {
     }
 };
 
+export async function queryUpdateEmployeeRole(newEmployeeRole) {
+    console.log('You selected Update An Employee Role');
+    try {
+        const query = `
+            UPDATE employee
+            SET role_id = $1
+            WHERE id = $2
+            RETURNING *;
+        `;
+        const values = [newEmployeeRole.role_id, newEmployeeRole.id];
+        const { rows } = await pool.query(query, values);
+        console.log('queryUpdateEmployeeRole function executed successfully');
+        return rows[0]; // Return the inserted role
+    } catch (err) {
+        console.error('Error executing insert queryUpdateEmployeeRole:', err);
+        throw err;
+    }
+};
+
+
 export async function queryAllRoles() {
     console.log('You selected View All Roles');
     try {
